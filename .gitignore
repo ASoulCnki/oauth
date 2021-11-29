@@ -1,0 +1,4 @@
+*temp
+*.rdb
+lua/config/*.lua
+.vscode

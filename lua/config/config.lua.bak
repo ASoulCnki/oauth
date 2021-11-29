@@ -1,0 +1,37 @@
+local _M = {}
+
+-- mysql config
+local dbConfig = {
+    host = "localhost",
+    port = 3306,
+    database = "asoulcnki",
+    user = "root",
+    password = "password",
+    charset = "utf8mb4",
+    max_packet_size = 1024 * 1024
+}
+
+-- redis config
+local redisConfig = {
+    host = "127.0.0.1",
+    port = 6379,
+    db_index = 0,
+    password = nil,
+    timeout = 1000,
+    pool_size = 100,
+    keepalive = 30000
+}
+
+-- auth and blackList config
+local Auth = {
+    enableBlackList = false, -- enable blackList
+    expireTokenTime = 120, -- seconds
+    expireSessionTime = 86400, -- session expire time
+    blackUidList = {} -- unused, uid tuple
+}
+
+_M.dbConfig = dbConfig
+_M.redisConfig = redisConfig
+_M.Auth = Auth
+
+return _M
