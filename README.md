@@ -25,10 +25,23 @@ pip3 install -r requirements.txt
 opm get openresty/lua-resty-redis \
   openresty/lua-resty-mysql \
   anjia0532/lua-resty-redis-util \
-  thibaultcha/lua-resty-jit-uuid
+  thibaultcha/lua-resty-jit-uuid \
+  tokers/lua-resty-requests
 ```
 
-如果你不喜欢使用 opm，也可以使用 LuaRocks
+<del>如果你不喜欢使用 opm，也可以使用 LuaRocks</del>
+
+现在必须要用了 :(
+
+需要额外安装这个包
+
+```bash
+luarocks install lua-resty-socket
+```
+
+## 其他
+
+不同地区 dns 解析情况可能不同，如果私信收发网络状态太差，可以尝试更改 conf/nginx.conf 的 resolver
 
 ## 如何启动
 
