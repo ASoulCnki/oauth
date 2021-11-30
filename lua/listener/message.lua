@@ -4,14 +4,15 @@ local constant = require("listener.constant")
 local ngx = require("ngx")
 
 local csrf = constant.csrf
-local domain = "https://api.vc.bilibili.com"
+local selfUserID = constant.selfID
+local domain = "https://api.vc.bilibili.com/session_svr/v1/session_svr"
 local filter = utils.table_filter
 local map = utils.table_map
 local decodeJSON = utils.decodeJSON
 
 local api_session_list = {
-    SYN = domain .. "/session_svr/v1/session_svr/new_sessions?begin_ts=%s&build=0&mobi_app=web",
-    ACK = domain .. "/session_svr/v1/session_svr/ack_sessions?begin_ts=%s&build=0&mobi_app=web"
+    SYN = domain .. "/new_sessions?begin_ts=%s&build=0&mobi_app=web",
+    ACK = domain .. "/ack_sessions?begin_ts=%s&build=0&mobi_app=web"
 }
 
 local auth_headers = {
@@ -28,7 +29,7 @@ local function get(url)
 end
 
 local function ack_session(session)
-    local ACK = domain .. '/session_svr/v1/session_svr/update_ack'
+    local ACK = domain .. '/update_ack'
     requests.post(ACK, {
         headers = auth_headers,
         body = {
@@ -47,10 +48,6 @@ local function get_session_list()
 
     local function filter_map_session_list(session_list)
 
-        if not session_list then
-            return nil
-        end
-
         session_list = filter(session_list, function(v)
             return v.unread_count > 0
         end)
@@ -62,6 +59,10 @@ local function get_session_list()
                 content = string.lower(decodeJSON(v.last_msg.content).content or v.last_msg.content),
                 msg_type = v.last_msg.msg_type
             }
+        end)
+
+        session_list = filter(session_list, function(v)
+            return v.uid ~= selfUserID
         end)
 
         return session_list

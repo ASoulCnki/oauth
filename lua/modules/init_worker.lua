@@ -5,6 +5,7 @@ local get_session_list = require("lua.listener.message").get_session_list
 local uuid = require("resty.jit-uuid")
 local ngx = require("ngx")
 
+-- localize functions for performance
 local new_timer = ngx.timer.every
 local filter = utils.table_filter
 local map = utils.table_map
@@ -13,14 +14,7 @@ local red = redis:new(config.redisConfig)
 -- get message and put uuid, uid to redis
 local handler = function()
 
-    if not 0 == ngx.worker.id() then
-        return
-    end
-
-    local res = get_session_list()
-
-    res = filter(res, function(v)
-
+    local res = filter(get_session_list(), function(v)
         return v.msg_type == 1 and #v.content > 10
     end)
 
@@ -32,6 +26,7 @@ local handler = function()
         if uuid.is_valid(id) then
             local cur_uid, _ = red:get(id)
 
+            -- unused cur_uid should init with "-1"
             if not (cur_uid and cur_uid == "-1") then
                 return
             end
