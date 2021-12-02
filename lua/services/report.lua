@@ -11,7 +11,7 @@ local function NotAuthorized(err)
 end
 
 local function handleData(data)
-    -- TODO
+    -- TODO: filter rules
     return data
 end
 
@@ -29,6 +29,7 @@ end
 
 local data, _ = cache:get(uid)
 
+-- 防止缓存穿透
 if data == "null" then
     ngx.say([[{"code": 404,"message": "not data", "data": {}}]])
     ngx.exit(ngx.HTTP_OK)

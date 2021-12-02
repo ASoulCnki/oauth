@@ -22,11 +22,7 @@ end
 local keyRegex, _ = codeGenRegex()
 
 local function isHasKeyWords(content)
-    if not keyRegex then
-        return true
-    end
-
-    return not not ngx.re.match(content, keyRegex, "jo")
+    return not (keyRegex and not ngx.re.match(content, keyRegex, "jo"))
 end
 
 -- content filter

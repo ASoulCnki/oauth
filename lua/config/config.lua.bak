@@ -24,6 +24,7 @@ local redisConfig = {
 
 -- auth and blackList config
 local Auth = {
+    headersName = "authorization",
     enableBlackList = false, -- enable blackList
     expireTokenTime = 120, -- seconds
     expireSessionTime = 86400, -- session expire time
