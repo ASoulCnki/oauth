@@ -106,8 +106,8 @@ local function bind(token, uid)
     if not uuid.is_valid(token) then
         return nil, "invalid token"
     end
-
-    local cur_uid, _ = red:get(uid)
+    -- get current uid by token, is token used by other uid, return nil 
+    local cur_uid, _ = red:get(token)
 
     -- unused cur_uid should init with "-1"
     if not (cur_uid and cur_uid == "-1") then
