@@ -101,10 +101,32 @@ local function revoke(authorization)
     return ok, "ok"
 end
 
+-- bind uuid to uid
+local function bind(token, uid)
+    if not uuid.is_valid(token) then
+        return nil, "invalid token"
+    end
+
+    local cur_uid, _ = red:get(uid)
+
+    -- unused cur_uid should init with "-1"
+    if not (cur_uid and cur_uid == "-1") then
+        return nil, "this user token not useable"
+    end
+
+    red:init_pipeline(2)
+
+    red:set(token, uid)
+    red:expire(token, config.Auth.expireSessionTime)
+
+    return red:commit_pipeline()
+end
+
 local _M = {}
 
 _M.code = code
 _M.auth = auth
 _M.revoke = revoke
+_M.bind = bind
 
 return _M
