@@ -19,7 +19,7 @@ if not token then
 end
 
 local response = {
-    code = 200,
+    code = 0,
     message = "ok",
     data = json.decode(token)
 }
