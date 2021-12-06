@@ -1,7 +1,7 @@
 local parse_cookie = require("listener.utils").parse_cookie
-
+local config = require("config.config")
 -- add you cookie here
-local cookie = ""
+local cookie = config.cookie
 
 local user_agent =
     "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
