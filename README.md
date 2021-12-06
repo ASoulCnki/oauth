@@ -16,9 +16,16 @@
 
 ## 安装
 
-使用前，请确保您已经安装 Python3 和 OpenResty 以及 OpenResty 包管理工具 opm 以及 luarocks
+依赖
 
-如果没有，请先前往安装
+- Openresty
+- opm
+- luarocks
+- Redis
+
+如果没有，请先前往安装，opm 随 OpenResty 携带，请检查 OpenResty 的 bin 目录，并将其添加到环境变量
+
+redis 和 luarocks 可以通过包管理工具获取
 
 ### 依赖安装
 
@@ -39,6 +46,8 @@ luarocks install lua-resty-socket
 不同地区 dns 解析情况可能不同，如果私信收发网络状态太差，可以尝试更改 conf/nginx.conf 的 resolver
 
 ## 如何启动
+
+0. 安装 OpenResty 和 Redis
 
 1. 将 `lua/config/config.lua.bak` 重命名为 `lua/config/config.lua` 并修改相应配置
 
