@@ -70,7 +70,8 @@ local function message_list()
     end
 
     ngx.update_time()
-    local begin_ts = ngx.now() * 1000
+    -- 直接取当前时间戳可能会错过之前的消息，这里减去5s是因为爬取周期是5s
+    local begin_ts = ngx.now() * 1000 - 5000
 
     local syn, ack = api_session_list.SYN, api_session_list.ACK
     local res, _ = get(string.format(syn, begin_ts))
