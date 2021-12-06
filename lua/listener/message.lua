@@ -8,7 +8,7 @@ local selfUserID = constant.selfID
 local domain = "https://api.vc.bilibili.com/session_svr/v1/session_svr"
 local filter = utils.table_filter
 local map = utils.table_map
-local decodeJSON = utils.decodeJSON
+local decode_json = utils.decode_json
 
 local api_session_list = {
     SYN = domain .. "/new_sessions?begin_ts=%s&build=0&mobi_app=web",
@@ -44,9 +44,10 @@ local function ack_session(session)
     })
 end
 
-local function get_session_list()
+local function message_list()
 
     local function filter_map_session_list(session_list)
+        local lower = string.lower
 
         session_list = filter(session_list, function(v)
             return v.unread_count > 0
@@ -56,7 +57,7 @@ local function get_session_list()
             ack_session(v)
             return {
                 uid = v.talker_id,
-                content = string.lower(decodeJSON(v.last_msg.content).content or v.last_msg.content),
+                content = lower(decode_json(v.last_msg.content).content or v.last_msg.content),
                 msg_type = v.last_msg.msg_type
             }
         end)
@@ -68,6 +69,7 @@ local function get_session_list()
         return session_list
     end
 
+    ngx.update_time()
     local begin_ts = ngx.now() * 1000
 
     local syn, ack = api_session_list.SYN, api_session_list.ACK
@@ -75,15 +77,15 @@ local function get_session_list()
 
     get(string.format(ack, begin_ts))
 
-    local data = res and decodeJSON(res:body())
+    local data = res and decode_json(res:body())
 
     data = data and filter_map_session_list(data.data.session_list)
 
     return data or {}
 end
 
-local _M = {}
-
-_M.get_session_list = get_session_list
+local _M = {
+    message_list = message_list
+}
 
 return _M

@@ -1,17 +1,13 @@
-local _M = {}
-
--- mysql config
 local dbConfig = {
-    host = "localhost",
+    host = "127.0.0.1",
     port = 3306,
-    database = "asoulcnki",
-    user = "root",
-    password = "password",
+    database = "test",
+    user = "test",
+    password = "test",
     charset = "utf8mb4",
     max_packet_size = 1024 * 1024
 }
 
--- redis config
 local redisConfig = {
     host = "127.0.0.1",
     port = 6379,
@@ -22,17 +18,23 @@ local redisConfig = {
     keepalive = 30000
 }
 
--- auth and blackList config
 local Auth = {
     headersName = "authorization",
     enableBlackList = false, -- enable blackList
     expireTokenTime = 120, -- seconds
-    expireSessionTime = 86400, -- session expire time
+    expireTempCodeTime = 1200,
+    expireSessionTime = 86400 * 7, -- session expire time
     blackUidList = {} -- unused, uid tuple
 }
 
-_M.dbConfig = dbConfig
-_M.redisConfig = redisConfig
-_M.Auth = Auth
+-- add you cookie here
+local cookie = ""
+
+local _M = {
+    dbConfig = dbConfig,
+    redisConfig = redisConfig,
+    Auth = Auth,
+    cookie = cookie
+}
 
 return _M

@@ -1,25 +1,33 @@
-# ASoulCnki Anniversary Service
+# ASoulCnki OAuth
 
-（枝网 OAuth 及 周年报告服务）
+（枝网 OAuth 服务）
 
 ## 本服务提供以下内容
 
 - 统一的 OAuth 鉴权（基于 B 站私信）
-- 枝网周年报告
+
+## 待完成
+
+0. 添加账号池，支持多个账号同时抓取私信
+1. 将不同的账号分配给不同的 worker
+2. 新增授权码接口，提供短时间的授权
+   1. 目前为固定时间只分配一个 token
+   2. 希望后续能根据传参约定 token 有效时间
 
 ## 安装
 
-使用前，请确保您已经安装 Python3 和 OpenResty 以及 OpenResty 包管理工具 opm
+依赖
 
-如果没有，请先前往安装
+- Openresty
+- opm
+- luarocks
+- Redis
+
+如果没有，请先前往安装，opm 随 OpenResty 携带，请检查 OpenResty 的 bin 目录，并将其添加到环境变量
+
+redis 和 luarocks 可以通过包管理工具获取
 
 ### 依赖安装
-
-这里安装 Python 和 OpenResty 的依赖
-
-```bash
-pip3 install -r requirements.txt
-```
 
 ```bash
 opm get openresty/lua-resty-redis \
@@ -28,12 +36,6 @@ opm get openresty/lua-resty-redis \
   thibaultcha/lua-resty-jit-uuid \
   tokers/lua-resty-requests
 ```
-
-<del>如果你不喜欢使用 opm，也可以使用 LuaRocks</del>
-
-现在必须要用了 :(
-
-需要额外安装这个包
 
 ```bash
 luarocks install lua-resty-socket
@@ -44,6 +46,8 @@ luarocks install lua-resty-socket
 不同地区 dns 解析情况可能不同，如果私信收发网络状态太差，可以尝试更改 conf/nginx.conf 的 resolver
 
 ## 如何启动
+
+0. 安装 OpenResty 和 Redis
 
 1. 将 `lua/config/config.lua.bak` 重命名为 `lua/config/config.lua` 并修改相应配置
 
