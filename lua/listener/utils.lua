@@ -45,6 +45,29 @@ local function table_map(t, fn)
     return new_table
 end
 
+local function table_chunk(t, size)
+    assert(type(t) == 'table', "tuple should be table")
+    assert(type(size) == "number", "size should be number")
+    assert(size > 0, "size should be greater than 0")
+    assert(#t >= size, "size should be less than #t")
+
+    if size == 1 then
+        return {t}
+    end
+
+    local new_table = {}
+
+    for index = 1, #t do
+        local flag = (index % size) + 1
+        if new_table[flag] then
+            new_table[flag][#new_table[flag] + 1] = t[index]
+        else
+            new_table[flag] = {t[index]}
+        end
+    end
+    return new_table
+end
+
 local function decode_json(s)
     local ok, data = pcall(json.decode, s)
     return ok and data
@@ -56,5 +79,6 @@ _M.parse_cookie = parse_cookie
 _M.table_filter = table_filter
 _M.table_map = table_map
 _M.decode_json = decode_json
+_M.table_chunk = table_chunk
 
 return _M
