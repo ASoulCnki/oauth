@@ -16,7 +16,8 @@ local single_handler = function(cookie)
     local data = message_list(cookie)
 
     if not data then
-        -- TODO: health check: if get message failed, should not use this cookie
+        -- TODO: health check: if get message failed
+        --   should not use this cookie
         ngx.log(ngx.ERR, "failed to get message")
         return
     end
@@ -54,17 +55,14 @@ end
 
 -- chunk size should be worker number
 
-if 0 == ngx.worker.id() then
-    -- TODO:
-    -- 1. support multi-account
-    -- 2. assign different cookie to different worker
+-- if 0 == ngx.worker.id() then
 
-    local ok, err = new_timer(5, handler) -- exec handler every 5 seconds
-    if not ok then
-        ngx.log(ngx.ERR, "failed to create timer: ", err)
-        return
-    end
+local ok, err = new_timer(5, handler) -- exec handler every 5 seconds
+if not ok then
+    ngx.log(ngx.ERR, "failed to create timer: ", err)
+    return
 end
+-- end
 
 uuid.seed()
 local _ = math.randomseed(ngx.now())
