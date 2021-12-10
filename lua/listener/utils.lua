@@ -52,7 +52,7 @@ local function table_chunk(t, size)
     assert(#t >= size, "size should be less than #t")
 
     if size == 1 then
-        return t
+        return {t}
     end
 
     local new_table = {}
