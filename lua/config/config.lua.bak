@@ -11,19 +11,25 @@ local redisConfig = {
 local Auth = {
     headersName = "authorization",
     enableBlackList = false, -- enable blackList
-    expireTokenTime = 120, -- seconds
-    expireTempCodeTime = 1200,
-    expireSessionTime = 86400 * 7, -- session expire time
+    expireTokenTime = 120, -- 120 seconds
+    expireTempCodeTime = 1200, -- token expire time: 20 minutes
+    expireSessionTime = 86400 * 7, -- session expire time: 7 days
     blackUidList = {} -- unused, uid tuple
 }
 
--- add you cookie here
-local cookie = ""
+-- 私信账号的cookie，每个Cookie至少需要包含以下几个字段：
+-- DedeUserID, bili_jct, SESSDATA
+local cookie_table = {
+    "DedeUserID=1; bili_jct=1; SESSDATA=1",
+}
+-- 当前nginx的worker数，请务必小于等于cookie的个数
+local worker_num = 1
 
 local _M = {
     redisConfig = redisConfig,
     Auth = Auth,
-    cookie = cookie
+    worker_num = worker_num,
+    cookie_table = cookie_table
 }
 
 return _M
