@@ -1,50 +1,53 @@
 local requests = require("resty.requests")
-local utils = require("listener.utils")
-local constant = require("listener.constant")
+local utils = require("lua.listener.utils")
 local ngx = require("ngx")
 
-local csrf = constant.csrf
-local selfUserID = constant.selfID
 local domain = "https://api.vc.bilibili.com/session_svr/v1/session_svr"
+local user_agent =
+    "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 local filter = utils.table_filter
 local map = utils.table_map
 local decode_json = utils.decode_json
+local parse_cookie = utils.parse_cookie
 
 local api_session_list = {
     SYN = domain .. "/new_sessions?begin_ts=%s&build=0&mobi_app=web",
     ACK = domain .. "/ack_sessions?begin_ts=%s&build=0&mobi_app=web"
 }
 
-local auth_headers = {
-    ["Cookie"] = constant.cookie,
-    ["User-Agent"] = constant.user_agent,
-    ["Origin"] = "https://message.bilibili.com/",
-    ["Referer"] = "https://message.bilibili.com/"
-}
+local function get_message(cookie)
+    local cookie_table = parse_cookie(cookie)
+    local self_uid = cookie_table.DedeUserID
+    local csrf = cookie_table.bili_jct
 
-local function get(url)
-    return requests.get(url, {
-        headers = auth_headers
-    })
-end
+    local auth_headers = {
+        ["Cookie"] = cookie,
+        ["User-Agent"] = user_agent,
+        ["Origin"] = "https://message.bilibili.com/",
+        ["Referer"] = "https://message.bilibili.com/"
+    }
 
-local function ack_session(session)
-    local ACK = domain .. '/update_ack'
-    requests.post(ACK, {
-        headers = auth_headers,
-        body = {
-            talker_id = session.talker_id,
-            session_type = 1,
-            ack_seqno = session.ack_seqno + session.unread_count,
-            build = 0,
-            mobi_app = 'web',
-            csrf_token = csrf,
-            csrf = csrf
-        }
-    })
-end
+    local function get(url)
+        return requests.get(url, {
+            headers = auth_headers
+        })
+    end
 
-local function message_list()
+    local function ack_session(session)
+        local ACK = domain .. '/update_ack'
+        requests.post(ACK, {
+            headers = auth_headers,
+            body = {
+                talker_id = session.talker_id,
+                session_type = 1,
+                ack_seqno = session.ack_seqno + session.unread_count,
+                build = 0,
+                mobi_app = 'web',
+                csrf_token = csrf,
+                csrf = csrf
+            }
+        })
+    end
 
     local function filter_map_session_list(session_list)
         local lower = string.lower
@@ -63,7 +66,7 @@ local function message_list()
         end)
 
         session_list = filter(session_list, function(v)
-            return v.uid ~= selfUserID
+            return v.uid ~= self_uid and v.msg_type == 1
         end)
 
         return session_list
@@ -80,13 +83,22 @@ local function message_list()
 
     local data = res and decode_json(res:body())
 
-    data = data and filter_map_session_list(data.data.session_list)
+    data = data.data and data.data.session_list and filter_map_session_list(data.data.session_list)
 
-    return data or {}
+    if not data then
+        ngx.log(ngx.ERR, string.format("UID [%s] get message failed", self_uid))
+    end
+
+    -- return data or {}
+    if data then
+        return data
+    else
+        return nil, "requests error"
+    end
 end
 
 local _M = {
-    message_list = message_list
+    message_list = get_message
 }
 
 return _M

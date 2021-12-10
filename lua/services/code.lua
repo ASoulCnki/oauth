@@ -1,7 +1,5 @@
 local ngx = require("ngx")
-local json = require("cjson")
 local auth = require("modules.auth")
-local config = require("config.config")
 
 local function NotAuthorized(err)
     ngx.status = ngx.HTTP_UNAUTHORIZED

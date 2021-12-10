@@ -112,7 +112,7 @@ local function bind(token, uid)
     if not uuid.is_valid(token) then
         return nil, ERROR.INVALID_TOKEN
     end
-    -- get current uid by token, is token used by other uid, return nil 
+    -- get current uid by token, is token used by other uid, return nil
     local cur_uid, _ = red:get(token)
 
     -- unused cur_uid should init with "-1"
@@ -133,10 +133,10 @@ local function temp_code(authorization)
         return nil, ERROR.INVALID_TOKEN
     end
 
-    local uid, err = auth(authorization)
+    local uid, auth_err = auth(authorization)
 
     if not uid then
-        return nil, err
+        return nil, auth_err
     end
 
     local key = "temp_" .. uid
