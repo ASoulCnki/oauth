@@ -17,5 +17,5 @@ local account_id = cookie_map[random]
 if account_id then
     ngx.say(string.format([[{"code":0,"message":"ok","uid":"%s"}]], account_id))
 else
-    ngx.say(string.format([[{"code":0,"message":"error","uid":null}]]))
+    ngx.say(string.format([[{"code":-1,"message":"error","uid":null}]]))
 end

@@ -48,16 +48,28 @@ luarocks install lua-resty-socket
 
 0. 安装 OpenResty 和 Redis
 
-1. 将 `lua/config/config.lua.bak` 重命名为 `lua/config/config.lua` 并修改相应配置
+1. 将 `lua/config/config.lua.bak` 重命名为 `lua/config/config.lua` 并修改相应配置，必选配置项如下
 
-2. 将自己机器人的 cookie 添加到 `lua/listener/constant.lua` 的 cookie 字段
+   - Redis 地址，密码，如果无密码请填写 `nil`
+   - 监听账号的 cookie，可配置多个，必选字段请参照文件内描述
 
-3. 将这个文件夹的内容全部复制到 openresty 目录下的 nginx 下，**记得改好权限**
+2. 将这个文件夹的内容全部复制到 openresty 目录下的 nginx 下，**记得改好权限**
 
-4. 启动 openresty
+3. 启动 openresty
+
+4. 可选配置项有
+   - 用户 session，token 的过期时间
+   - 用户鉴权使用的头(尚在施工，目前只支持 `Authorization` 头)
+   - 根据 UID 做的黑名单
 
 不复制文件可以选择在当前目录直接启动，需要添加参数，命令为
 
 ```sh
 openresty -p `pwd` -c conf/nginx.conf
+```
+
+每次修改配置后，需要 `reload`
+
+```sh
+openresty -p `pwd` -c conf/nginx.conf -s reload
 ```

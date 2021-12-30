@@ -1,4 +1,4 @@
-# 枝网周年服务 API 文档
+# 枝网 OAuth API 文档
 
 ## 获取新的 token
 
@@ -81,5 +81,27 @@ Authorization: token
   },
   "code": 0,
   "message": "ok"
+}
+```
+
+## 获取机器人账号 UID
+
+```http
+GET /uid
+```
+
+### 响应
+
+| 名称    | 解释                |
+| ------- | ------------------- |
+| code    | 为 0 时，验证成功   |
+| message | 报错信息，默认为 ok |
+| uid     | 机器人账号的 uid    |
+
+```json
+{
+  "code": 0,
+  "message": "ok",
+  "uid": 114514
 }
 ```
